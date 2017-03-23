@@ -4,15 +4,13 @@
 
 ### 安装
 
-composer require cookietime/janitor
+    composer require cookietime/janitor
 
 ### 配置
 
 1. 添加 `\CookieTime\Janitor\JanitorServiceProvider::class` 到 `config/app.php`
-
-2. php artisan vendor:publish
-
-3. php artisan migrate
+2. `php artisan vendor:publish`
+3. `php artisan migrate`
 
 
 ### 使用方法
