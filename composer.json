@@ -1,0 +1,17 @@
+{
+    "name": "cookietime/janitor",
+    "authors": [
+        {
+            "name": "caoke",
+            "email": "caoke@huami.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CookieTime\\Janitor\\": "src/"
+        }
+    }
+}
