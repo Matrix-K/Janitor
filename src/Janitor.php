@@ -5,18 +5,10 @@ use App\User;
 use CookieTime\Janitor\Models\Ability;
 use CookieTime\Janitor\Models\Role;
 use CookieTime\Janitor\Strategy\KeyCode;
-use \Illuminate\Foundation\Application;
 
 class Janitor {
 
     use KeyCode;
-
-    private $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
 
     /**
      * check entity has ability
@@ -79,7 +71,8 @@ class Janitor {
      */
     public function attachRole(User $user, Role $role)
     {
-        return $user->roles()->attach($role->id);
+        $user->keyCode += $role->keyCode;
+        return $user->update()?$user->roles()->attach($role->id):false;
     }
 
     /**

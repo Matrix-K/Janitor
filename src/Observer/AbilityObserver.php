@@ -1,7 +1,6 @@
 <?php
 namespace CookieTime\Janitor\Observer;
 
-
 use CookieTime\Janitor\Models\Ability;
 use CookieTime\Janitor\Strategy\KeyCode;
 

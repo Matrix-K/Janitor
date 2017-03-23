@@ -11,7 +11,7 @@ class CreateRolesTable extends Migration
             $table->increments('id');
             $table->string('name')->index();
             $table->string('description');
-            $table->string('keyCode');
+            $table->string('keyCode')->default('0');;
             $table->timestamps();
         });
     }
