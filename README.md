@@ -18,19 +18,23 @@
 ```php
 
 // User Role Ability 均为实体类
+$user = User::find($id);
+$role = Role::find($id);
+$ability = Ability::find($id);
+
 // 是否具有角色
-Janitor::has(User,Role);
+Janitor::has($user,$role);
 // 是否有权限
-Janitor::may(User,Ability);
-Janitor::may(Role,Ability);
+Janitor::may($user,$ability);
+Janitor::may($role,$ability);
 // 赋予角色
-Janitor::attachRole(User,Role);
+Janitor::attachRole($user,$role);
 // 取消角色授予
-Janitor::detachRole(User,Role);
+Janitor::detachRole($user,$role);
 // 赋予权限
-Janitor::attachAbility(User,Ability);
-Janitor::attachAbility(Role,Ability);
+Janitor::attachAbility($user,$ability);
+Janitor::attachAbility($role,$ability);
 // 取消授权
-Janitor::detachAbility(User,Ability);
-Janitor::detachAbility(Role,Ability);
+Janitor::detachAbility($user,$ability);
+Janitor::detachAbility($role,$ability);
 ```
