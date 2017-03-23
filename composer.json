@@ -2,12 +2,13 @@
     "name": "cookietime/janitor",
     "authors": [
         {
-            "name": "caoke",
+            "name": "CookieTime",
             "email": "caoke@huami.com"
         }
     ],
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.0",
+        "laravel/framework": "5.1.*"
     },
     "autoload": {
         "psr-4": {
