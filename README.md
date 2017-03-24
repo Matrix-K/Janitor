@@ -1,6 +1,11 @@
 # Janitor
 
-基于位与计算实现的权限系统
+基于位与、质数计算实现的权限系统
+
+### 优缺点
+
+* 优点 计算速度快
+* 缺点 位与运算仅支持63个权限  质数运算支持最多131个权限 (64位系统下)
 
 ### 安装
 
@@ -8,10 +13,9 @@
 
 ### 配置
 
-1. 添加 `\CookieTime\Janitor\JanitorServiceProvider::class` 到 `config/app.php`
-2. `php artisan vendor:publish`
-3. `php artisan migrate`
-
+* 添加 `\CookieTime\Janitor\JanitorServiceProvider::class` 到 `config/app.php`
+* `php artisan vendor:publish`
+* `php artisan migrate`
 
 ### 使用方法
 
