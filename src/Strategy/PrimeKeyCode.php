@@ -45,7 +45,6 @@ class PrimeKeyCode implements Strategy {
         for ($i = 2; $i <= $keyCode; $i++) {
             while ($keyCode <> $i) {
                 if ($keyCode % $i == 0) {
-                    printf("%d*", $i);
                     array_push($codes,$i);
                     $keyCode /= $i;
                 } else {
