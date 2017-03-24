@@ -11,10 +11,6 @@ trait KeyCode {
      */
     public function generateKeyCode($id)
     {
-        if (!is_int($id)) {
-            return false;
-        }
-
         return pow(2, $id);
     }
 
