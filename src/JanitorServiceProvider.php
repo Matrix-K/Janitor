@@ -3,6 +3,8 @@ namespace CookieTime\Janitor;
 
 use CookieTime\Janitor\Models\Ability;
 use CookieTime\Janitor\Observer\AbilityObserver;
+use CookieTime\Janitor\Strategy\BitAndKeyCode;
+use CookieTime\Janitor\Strategy\PrimeKeyCode;
 use Illuminate\Support\ServiceProvider;
 
 class JanitorServiceProvider extends ServiceProvider
@@ -11,6 +13,7 @@ class JanitorServiceProvider extends ServiceProvider
     {
         $this->publishMigrations();
         $this->registerObserver();
+        $this->mergeConfig();
     }
 
     public function register()
@@ -40,12 +43,27 @@ class JanitorServiceProvider extends ServiceProvider
     protected function registerSingleton()
     {
         $this->app->singleton('janitor', function ($app) {
-            return new Janitor($app);
+            switch (config('janitor.strategy'))
+            {
+                case 'BitAnd':
+                    return new Janitor(new BitAndKeyCode());
+                    break;
+                case 'Prime':
+                    return new Janitor(new PrimeKeyCode());
+                    break;
+            }
         });
     }
 
     protected function registerObserver()
     {
         Ability::observe(AbilityObserver::class);
+    }
+
+    protected function mergeConfig()
+    {
+        $this->publishes([
+            __DIR__.'/config.php' => config_path('janitor.php'),
+        ]);
     }
 }

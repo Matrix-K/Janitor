@@ -2,13 +2,18 @@
 namespace CookieTime\Janitor;
 
 use App\User;
+use CookieTime\Janitor\Contract\Strategy;
 use CookieTime\Janitor\Models\Ability;
 use CookieTime\Janitor\Models\Role;
-use CookieTime\Janitor\Strategy\KeyCode;
 
 class Janitor {
 
-    use KeyCode;
+    protected $strategy;
+
+    public function __construct(Strategy $strategy)
+    {
+        $this->strategy = $strategy;
+    }
 
     /**
      * check entity has ability
@@ -38,11 +43,7 @@ class Janitor {
             return false;
         }
 
-        if (intval($ability->keyCode) & $keyCodeSummary) {
-            return true;
-        }
-
-        return false;
+        return $this->strategy->verify(intval($ability->keyCode), $keyCodeSummary);
     }
 
     /**
@@ -83,13 +84,13 @@ class Janitor {
      */
     public function attachAbility($entity, Ability $ability)
     {
-        $codes = $this->parseKeyCode($entity->keyCode);
+        $codes = $this->strategy->parseKeyCode($entity->keyCode);
 
         if (!in_array($ability->keyCode, $codes)) {
             array_push($codes, $ability->keyCode);
         }
 
-        $entity->keyCode = array_sum($codes);
+        $entity->keyCode = $this->strategy->keyCodeCalculation($codes);
 
         return $entity->update();
     }
@@ -115,13 +116,13 @@ class Janitor {
      */
     public function detachAbility($entity, Ability $ability)
     {
-        $codes = $this->parseKeyCode($entity->keyCode);
+        $codes = $this->strategy->parseKeyCode($entity->keyCode);
 
         if ($key = array_search($ability->keyCode, $codes)) {
             unset($codes[$key]);
         }
 
-        $entity->keyCode = array_sum($codes);
+        $entity->keyCode = $this->strategy->keyCodeCalculation($codes);
 
         return $entity->update();
     }
@@ -143,7 +144,7 @@ class Janitor {
      */
     public function getAbilities($entity)
     {
-        $codes = $this->parseKeyCode($entity->keyCode);
+        $codes = $this->strategy->parseKeyCode($entity->keyCode);
 
         return Ability::whereIn('keyCode',$codes)->get()->toArray();
     }
