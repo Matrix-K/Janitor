@@ -19,31 +19,19 @@ class Janitor {
      * check entity has ability
      *
      * @param $entity User| Role
-     * @param $ability String
+     * @param Ability $ability String
      * @return bool
      */
-    public function may($entity, $ability)
+    public function may($entity, Ability $ability)
     {
-        $ability = Ability::where('name', $ability)->first();
+        $permissionsSummary = $entity->permissionsSummary()->getResults();
 
-        if (empty($ability)) {
+        if(empty($permissionsSummary))
+        {
             return false;
         }
 
-        $keyCodeSummary = 0;
-
-        if ($entity instanceof User) {
-            $roles = $entity->roles()->get()->toArray();
-            foreach ($roles as $role) {
-                $keyCodeSummary += intval($role['keyCode']);
-            }
-        } elseif ($entity instanceof Role) {
-            $keyCodeSummary = $entity->keyCode;
-        } else {
-            return false;
-        }
-
-        return $this->strategy->verify(intval($ability->keyCode), $keyCodeSummary);
+        return $this->strategy->verify($ability->keyCode,$permissionsSummary[$ability->type]);
     }
 
     /**
@@ -53,9 +41,9 @@ class Janitor {
      * @param $role
      * @return bool
      */
-    public function has(User $user, $role)
+    public function has(User $user,Role $role)
     {
-        $role = $user->roles()->where('name', $role)->first();
+        $role = $user->roles()->where('name', $role->name)->first();
 
         if (empty($role)) {
             return false;
@@ -72,6 +60,8 @@ class Janitor {
      */
     public function attachRole(User $user, Role $role)
     {
+        // 添加角色
+        // 
         $user->keyCode += $role->keyCode;
         return $user->update()?$user->roles()->attach($role->id):false;
     }
@@ -84,6 +74,10 @@ class Janitor {
      */
     public function attachAbility($entity, Ability $ability)
     {
+        // 获取用户 角色权限
+        // 解开权限码 去重 然后再相加
+        // 更新用户或角色权限
+        // 完毕
         $codes = $this->strategy->parseKeyCode($entity->keyCode);
 
         if (!in_array($ability->keyCode, $codes)) {
@@ -104,6 +98,9 @@ class Janitor {
      */
     public function detachRole(User $user, Role $role)
     {
+        // 获取用户权限 及 角色
+        // 去除取消的角色之后其它的角色权限取交集
+        // 赋予用户权限  取消用户角色
         return $user->roles()->detach($role->id);
     }
 
@@ -116,6 +113,10 @@ class Janitor {
      */
     public function detachAbility($entity, Ability $ability)
     {
+        // 获取用户 角色权限
+        // 解开权限码 移除权限 然后再相加
+        // 更新用户或角色权限
+        // 完毕
         $codes = $this->strategy->parseKeyCode($entity->keyCode);
 
         if ($key = array_search($ability->keyCode, $codes)) {

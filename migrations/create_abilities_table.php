@@ -10,18 +10,16 @@ class CreateAbilitiesTable extends Migration
     {
         Schema::create('janitor_abilities', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->index();
-            $table->string('description');
-            // entrances.index
-            $table->string('ability_prefix')->index();
-            // status sex 等属性字段
-            $table->string('ability_attribute')->index();
-            // 允许的属性值
-            $table->string('ability_attribute_value')->index();
-            $table->string('keyCode')->default('0');;
+            $table->string('type')->index();// 权限类别
+            $table->string('name')->index();// 权限名称
+            $table->string('description'); // 权限描述
+            $table->string('keyCode')->default('0');
             $table->timestamps();
         });
 
+        // 用户 角色  多对多   用户 权限 多对多   权限 角色  多对多
+
+        // 用户平台权限  用户资源类型权限  用户资源权限  用户资源请求权限
     }
 
     /**

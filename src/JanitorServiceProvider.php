@@ -1,19 +1,20 @@
 <?php
 namespace CookieTime\Janitor;
 
+use CookieTime\Janitor\Contract\Strategy;
 use CookieTime\Janitor\Models\Ability;
 use CookieTime\Janitor\Observer\AbilityObserver;
 use CookieTime\Janitor\Strategy\BitAndKeyCode;
 use CookieTime\Janitor\Strategy\PrimeKeyCode;
 use Illuminate\Support\ServiceProvider;
 
-class JanitorServiceProvider extends ServiceProvider
-{
+class JanitorServiceProvider extends ServiceProvider {
+
     public function boot()
     {
         $this->publishMigrations();
-        $this->registerObserver();
         $this->mergeConfig();
+        $this->registerObserver();
     }
 
     public function register()
@@ -25,33 +26,27 @@ class JanitorServiceProvider extends ServiceProvider
     {
         $publishes = [];
 
-        $migrations = scandir(__DIR__."/../migrations/");
+        $migrations = scandir(__DIR__ . "/../migrations/");
 
         $date = date('Y_m_d_His', time());
 
-        foreach($migrations as $migration)
-        {
-            if($migration != '.' && $migration != '..')
-            {
-                $publishes[__DIR__."/../migrations/$migration"] = database_path('migrations/'.$date."_".$migration);
+        foreach ($migrations as $migration) {
+            if ($migration != '.' && $migration != '..') {
+                $publishes[__DIR__ . "/../migrations/$migration"] = database_path('migrations/' . $date . "_" . $migration);
             }
         }
 
-        $this->publishes($publishes,'janitor.migrations');
+        $this->publishes($publishes, 'janitor.migrations');
     }
 
     protected function registerSingleton()
     {
+        $this->app->singleton(Strategy::class,function($app){
+            return new BitAndKeyCode();
+        });
+
         $this->app->singleton('janitor', function ($app) {
-            switch (config('janitor.strategy'))
-            {
-                case 'BitAnd':
-                    return new Janitor(new BitAndKeyCode());
-                    break;
-                case 'Prime':
-                    return new Janitor(new PrimeKeyCode());
-                    break;
-            }
+            return new Janitor(app()->make(Strategy::class));
         });
     }
 
@@ -63,7 +58,12 @@ class JanitorServiceProvider extends ServiceProvider
     protected function mergeConfig()
     {
         $this->publishes([
-            __DIR__.'/config.php' => config_path('janitor.php'),
+            __DIR__ . '/config.php' => config_path('janitor.php'),
         ]);
+    }
+
+    public function provides()
+    {
+        return ['janitor'];
     }
 }

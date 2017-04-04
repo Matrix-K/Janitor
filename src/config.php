@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'strategy'=>'BitAnd'
+    'userModel'=> App\User::class
 ];

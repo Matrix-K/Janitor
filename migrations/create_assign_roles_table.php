@@ -11,7 +11,6 @@ class CreateAssignRolesTable extends Migration
             $table->increments('id');
             $table->string('user_id')->index();
             $table->string('role_id')->index();
-            $table->integer('forbidden')->index()->default('0');;
         });
     }
 

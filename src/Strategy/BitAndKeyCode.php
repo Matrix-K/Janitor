@@ -1,6 +1,7 @@
 <?php
 
 namespace CookieTime\Janitor\Strategy;
+
 use CookieTime\Janitor\Contract\Strategy;
 
 /**

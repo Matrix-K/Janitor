@@ -4,7 +4,7 @@ namespace CookieTime\Janitor\Observer;
 use CookieTime\Janitor\Contract\Strategy;
 use CookieTime\Janitor\Models\Ability;
 
-class AbilityObserver {
+class AbilityObserver{
 
     protected $strategy;
 
@@ -12,13 +12,14 @@ class AbilityObserver {
     {
         $this->strategy = $strategy;
     }
+    
     /**
-     * 新创建完成分配权限值
+     * 创建之前
      * @param Ability $ability
      */
-    public function created(Ability $ability)
+    public function creating(Ability $ability)
     {
-        $ability->keyCode = $this->strategy->generateKeyCode($ability->id - 1);
-        $ability->update();
+        $count = Ability::where('type',$ability->type)->count();
+        $ability->keyCode = $this->strategy->generateKeyCode($count);
     }
 }
